@@ -1,0 +1,15 @@
+---
+
+ipv6tun_datadir: "/home/ansible/data"
+ipv6tun_ccd: "{{ ipv6tun_datadir }}/ccd"
+ipv6tun_easyrsa3: "{{ ipv6tun_datadir }}/easyrsa3"
+ipv6tun_clientdir: "{{ ipv6tun_datadir }}/clientcfg"
+
+ipv6tun_client_realm: "ipv6tun01.vpsfree.cz"
+ipv6tun_delegated_prefix: "2a03:3b40:"
+ipv6tun_interconnect_prefix: "{{ ipv6tun_delegated_prefix }}200::"
+
+
+include: clientlist.yaml
+
+...

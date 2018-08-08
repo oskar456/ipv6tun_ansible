@@ -1,0 +1,47 @@
+# {{ ansible_managed }}
+#
+
+server:
+    # Listen on all configured IPv4 interfaces.
+    listen: 0.0.0.0@53
+    # Listen on all configured IPv6 interfaces.
+    listen: ::@53
+    # User for running the server.
+    user: knot:knot
+
+log:
+    # Log info and more serious events to syslog.
+  - target: syslog
+    any: info
+
+remote:
+{% for s in knot_slaves %}
+  - id: {{ s.name }}
+{% for a in s.addr %}
+    address: {{ a }}
+{% endfor %}
+{% endfor %}
+
+acl:
+  - id: acl_slave
+{% for s in knot_slaves %}
+{% for a in s.addr %}
+    address: {{ a }}
+{% endfor %}
+{% endfor %}
+    action: transfer
+
+template:
+  - id: default
+    storage: "/var/lib/knot"
+    file: "%s"
+    acl: acl_slave
+{% for s in knot_slaves %}
+    notify: {{ s.name }}
+{% endfor %}
+
+zone:
+{% for z in knot_zones %}
+  - domain: "{{ z.name }}"
+{% endfor %}
+

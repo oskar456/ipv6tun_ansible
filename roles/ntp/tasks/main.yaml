@@ -1,0 +1,21 @@
+---
+
+ - name: Install NTP server
+   package:
+     name: "{{ item }}"
+     state: latest
+   with_items:
+     - ntp
+
+ - name: Template NTP config
+   template:
+     src: ntp.conf.j2
+     dest: /etc/ntp.conf
+   notify: restart ntp
+
+ - name: Enable NTP service
+   service:
+     name: ntp
+     state: started
+     enabled: yes
+

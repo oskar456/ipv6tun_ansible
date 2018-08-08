@@ -1,0 +1,25 @@
+#{{ ansible_managed }}
+
+mode server
+tls-server
+dev {{ openvpn_devname }}
+topology subnet
+push "topology subnet"
+ifconfig {{ openvpn_ifconfig }}
+ifconfig-ipv6 {{ openvpn_ifconfig_ipv6 }}
+{% for r in openvpn_route_ipv6 %}
+route-ipv6 {{ r }}
+{% endfor %}
+
+client-config-dir {{ openvpn_ccd }}
+ccd-exclusive
+
+ca {{ openvpn_ca }}
+crl-verify {{ openvpn_crl }}
+cert {{ openvpn_cert }}
+key {{ openvpn_key }}
+dh {{ openvpn_dh }}
+
+{% for o in openvpn_others %}
+{{ o }}
+{% endfor %}

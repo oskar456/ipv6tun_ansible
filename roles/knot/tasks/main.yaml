@@ -1,0 +1,19 @@
+---
+
+ - name: Install Knot
+   package:
+     name: knot
+     state: latest
+
+ - name: Template Knot config
+   template:
+     src: knot.conf.j2
+     dest: /etc/knot/knot.conf
+   notify: reload Knot
+
+ - name: Enable Knot service
+   service:
+     name: knot
+     enabled: yes
+
+ - meta: flush_handlers

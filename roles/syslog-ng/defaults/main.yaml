@@ -1,0 +1,11 @@
+---
+tls_common_name: "{{ansible_fqdn}}"
+tls_path: "/etc/ssl"
+tls_certpath: "{{tls_path}}/certs"
+tls_keypath: "{{tls_path}}/private"
+tls_key: "{{tls_keypath}}/{{tls_common_name}}.key"
+tls_crt: "{{tls_certpath}}/{{tls_common_name}}.crt"
+
+remote_log_hostname: vinovago.cesnet.cz
+remote_log_port: 514
+remote_log_trusted_dn: "CN={{remote_log_hostname}}, *"

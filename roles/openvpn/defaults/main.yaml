@@ -1,0 +1,33 @@
+---
+
+openvpn_service_name: ipv6tunnel
+
+openvpn_config_file: "/etc/openvpn/server/{{ openvpn_service_name }}.conf"
+openvpn_systemd_service_name: "openvpn-server@{{ openvpn_service_name }}"
+
+
+openvpn_devname: tun0
+openvpn_ifconfig: 169.254.200.200 255.255.255.255
+openvpn_ifconfig_ipv6: 2a03:3b40:200::200/64 2a03:3b40:200::200
+openvpn_route_ipv6:
+  - 2a03:3b40:200::/40
+
+openvpn_certpath: /home/ansible/data/easyrsa3/pki
+
+openvpn_ccd: /home/ansible/data/ccd
+openvpn_ca: "{{ openvpn_certpath }}/ca.crt"
+openvpn_crl: "{{ openvpn_certpath }}/crl.pem"
+openvpn_cert: "{{ openvpn_certpath }}/issued/ipv6tun01.vpsfree.cz.crt"
+openvpn_key: "{{ openvpn_certpath }}/private/ipv6tun01.vpsfree.cz.key"
+openvpn_dh: "{{ openvpn_certpath }}/dh.pem"
+
+openvpn_others:
+  - "auth none"
+  - "cipher none"
+  - "ncp-ciphers AES-256-GCM:AES-256-CBC"
+  - "ping 30"
+  - "ping-restart 60"
+  - "user nobody"
+  - "group daemon"
+  - "explicit-exit-notify 1"
+  - "mute 20"

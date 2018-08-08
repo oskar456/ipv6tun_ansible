@@ -1,0 +1,40 @@
+---
+
+ - name: Uninstall Exim
+   apt:
+     autoremove: yes
+     purge: yes
+     name: exim4-*
+     state: absent
+   when: ansible_os_family == "Debian"
+
+ - name: Install Postfix
+   package:
+     name: postfix
+     state: present
+
+ - name: Configure maildir
+   lineinfile:
+     dest: /etc/postfix/main.cf
+     line: "home_mailbox = .maildir/"
+   notify: Reload Postfix
+
+ - name: Configure DANE validation
+   blockinfile:
+     dest: /etc/postfix/main.cf
+     block: |
+       smtp_dns_support_level = dnssec
+       smtp_tls_security_level = dane
+       smtp_tls_loglevel = 1
+       smtp_tls_CApath = /etc/ssl/certs
+       smtp_tls_mandatory_ciphers = high
+       tls_high_cipherlist = EDH+CAMELLIA:EDH+aRSA:EECDH+aRSA+AESGCM:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EDH+aECDSA:EECDH+aECDSA+AESGCM:EECDH+aECDSA+SHA384:EECDH+aECDSA+SHA256:EECDH:+CAMELLIA256:+AES256:+CAMELLIA128:+AES128:+SSLv3:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!DSS:!RC4:!SEED:CAMELLIA256-SHA:AES256-SHA:CAMELLIA128-SHA:AES128-SHA
+   notify: Restart Postfix
+
+ - include: dh_params.yaml
+
+ - name: Enable Postfix service
+   service:
+     name: "postfix"
+     state: started
+     enabled: yes

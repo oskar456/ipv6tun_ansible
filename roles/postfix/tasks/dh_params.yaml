@@ -1,0 +1,11 @@
+---
+
+ - name: Generate DH parameters
+   command: openssl dhparam -out /etc/postfix/dh2048.pem 2048 creates=/etc/postfix/dh2048.pem
+
+
+ - name: Configure DH parameters
+   lineinfile:
+     dest: /etc/postfix/main.cf
+     line: smtpd_tls_dh1024_param_file = /etc/postfix/dh2048.pem
+   notify: Reload Postfix

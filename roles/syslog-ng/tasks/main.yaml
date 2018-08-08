@@ -1,0 +1,25 @@
+---
+ - name: Uninstall rsyslog
+   package:
+     name: rsyslog
+     state: absent
+
+ - name: Install syslog-ng
+   package:
+     name: syslog-ng-core
+     state: present
+
+ - name: Setup remote logging
+   template:
+     src: remote_log.j2
+     dest: /etc/syslog-ng/conf.d/remote_log.conf
+   notify: restart syslog-ng
+
+   #systemd-journald tohle resi
+ - name: Create socket for postfix
+   copy:
+     src: postfix.conf
+     dest: /etc/syslog-ng/conf.d/postfix.conf
+   notify: restart syslog-ng
+   when: False
+

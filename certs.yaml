@@ -1,0 +1,34 @@
+---
+
+ - name: Generate client certificates
+   hosts: ipv6tun01
+   become: false
+   tasks:
+     - name: Import client list
+       include_vars: clientlist.yaml
+
+     - name: Create CCD entry
+       template: 
+         src: ccdentry.j2
+         dest: "{{ ipv6tun_ccd }}/{{ item.client }}.{{ ipv6tun_client_realm }}"
+       with_items: "{{ ipv6tun_clients }}"
+
+     - name: Generate client keypairs and requests
+       command: "./easyrsa --batch --req-cn={{ item.client }}.{{ ipv6tun_client_realm }} gen-req {{ item.client }} nopass"
+       args:
+         chdir: "{{ ipv6tun_easyrsa3 }}"
+         creates: "{{ ipv6tun_easyrsa3 }}/pki/reqs/{{ item.client }}.req"
+       with_items: "{{ ipv6tun_clients }}"
+
+     - name: Sign client requests
+       command: "./easyrsa --batch sign-req client {{ item.client }}"
+       args:
+         chdir: "{{ ipv6tun_easyrsa3 }}"
+         creates: "{{ ipv6tun_easyrsa3 }}/pki/issued/{{ item.client }}.crt"
+       with_items: "{{ ipv6tun_clients }}"
+
+     - name: Generate client config file
+       template: 
+         src: ipv6tun.ovpn.j2
+         dest: "{{ ipv6tun_clientdir }}/ipv6tun-{{ item.client }}.conf"
+       with_items: "{{ ipv6tun_clients }}"

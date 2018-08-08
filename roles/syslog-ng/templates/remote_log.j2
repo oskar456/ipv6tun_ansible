@@ -1,0 +1,20 @@
+destination d_net {
+	network(
+		"{{ remote_log_hostname }}"
+		port({{ remote_log_port }})
+		transport(tls)
+		tls(
+			key_file("{{ tls_key }}")
+			cert_file("{{ tls_crt }}")
+			ca_dir("{{ tls_certpath }}")
+			trusted_dn("{{ remote_log_trusted_dn }}")
+		)
+		flush_lines(100)
+		flush_timeout(5000)
+	);
+};
+
+log {
+	source(s_src);
+	destination(d_net);
+};

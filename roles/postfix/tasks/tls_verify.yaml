@@ -1,0 +1,19 @@
+---
+
+ - name: Copy TLS policy file
+   copy:
+     src: tls_policy
+     dest: /etc/postfix/tls_policy
+   register: postfix_tls_policy_result
+
+ - name: Recompile TLS policy
+   command: postmap /etc/postfix/tls_policy
+   when: postfix_tls_policy_result | changed
+
+ - name: Enable TLS policy
+   lineinfile:
+     dest: /etc/postfix/main.cf
+     line: "smtp_tls_policy_maps = hash:/etc/postfix/tls_policy"
+   notify: Reload Postfix
+
+

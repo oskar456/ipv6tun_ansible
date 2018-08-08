@@ -1,0 +1,3 @@
+# {{ ansible_managed }}
+iroute-ipv6 {{ ipv6tun_interconnect_prefix }}{{ item.id }}/128
+iroute-ipv6 {{ ipv6tun_delegated_prefix }}{{ item.id }}::/48

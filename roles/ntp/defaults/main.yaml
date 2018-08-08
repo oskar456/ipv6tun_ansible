@@ -1,0 +1,6 @@
+---
+
+ntp_servers:
+  - "tak6.cesnet.cz"
+  - "tik.cesnet.cz"
+  - "tak.cesnet.cz"

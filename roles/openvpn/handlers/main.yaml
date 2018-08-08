@@ -1,0 +1,6 @@
+---
+
+ - name: restart OpenVPN
+   service:
+     name: "{{ openvpn_systemd_service_name }}"
+     state: restarted

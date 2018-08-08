@@ -1,0 +1,13 @@
+
+knot_slaves:
+  - name: ns1.vpsfree.cz
+    addr:
+      - 2a01:430:17:1::ffff:179
+      - 77.93.223.251
+  - name: ns2.vpsfree.cz
+    addr:
+      - 2a03:3b40:100::1:51
+      - 37.205.11.51
+
+knot_zones:
+  - name: 2.0.0.4.b.3.3.0.a.2.ip6.arpa

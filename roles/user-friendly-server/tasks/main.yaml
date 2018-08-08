@@ -1,0 +1,74 @@
+---
+
+ - name: Install various utilities
+   package:
+     name: "{{ item }}"
+     state: latest
+   with_items:
+     - vim
+     - libpam-systemd
+     - dnsutils
+     - ca-certificates
+     - tcpdump
+     - sysstat
+     - htop
+     - iftop
+     - tmux
+     - mosh
+
+ - name: Setup default root bashrc that uses .bashrc.d
+   copy:
+     src: bashrc
+     dest: /root/.bashrc
+
+ - name: Create .bashrc.d
+   file:
+     state: directory
+     name: /root/.bashrc.d
+
+ - name: Set colorful PS1
+   copy:
+     src: 55-PS1.sh
+     dest: /root/.bashrc.d/55-PS1.sh
+
+ - name: Set colorful ls
+   copy:
+     src: 56-ls-colors.sh
+     dest: /root/.bashrc.d/56-ls-colors.sh
+
+ - name: Setup vim syntax highlight
+   lineinfile:
+     dest: /etc/vim/vimrc
+     regexp: ^\"?(syntax on)
+     line: \1
+     backrefs: yes
+
+ - name: Setup vim dark background
+   lineinfile:
+     dest: /etc/vim/vimrc
+     regexp: ^\"?(set background=dark)
+     line: \1
+     backrefs: yes
+
+ - name: Setup VGA console font
+   lineinfile:
+     dest: /etc/default/console-setup
+     regexp: ^FONTFACE=
+     line: FONTFACE="VGA"
+
+ - name: Do not clear boot logs on tty1
+   copy:
+     src: getty@tty1.service.d
+     dest: /etc/systemd/system/
+
+ - name: Disable HashKnownHosts
+   lineinfile:
+     dest: /etc/ssh/ssh_config
+     regexp: ^(\s*HashKnownHosts)
+     line: \1 no
+     backrefs: yes
+
+ - name: Default tmux.conf
+   copy:
+     src: tmux.conf
+     dest: /root/.tmux.conf

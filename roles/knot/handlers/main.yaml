@@ -1,0 +1,6 @@
+---
+
+ - name: reload Knot
+   service:
+     name: knot
+     state: reloaded

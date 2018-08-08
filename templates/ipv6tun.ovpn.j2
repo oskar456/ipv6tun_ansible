@@ -1,0 +1,72 @@
+# vpsFree.cz IPv6 tunnel client configuration file
+# generated for client {{ item.client }} 
+
+# No need to edit this file for usage with OpenVPN 2.4 on OpenWRT/LEDE
+
+client
+nobind
+remote ipv6tun01.vpsfree.cz 1194
+proto udp4	# Change to udp for OpenVPN < 2.4
+dev tunipv6
+tun-ipv6
+remote-cert-tls server
+auth none
+cipher none
+ncp-disable	# OpenVPN 2.4 only
+
+## Adjust keepalive to suit your needs
+keepalive 30 120
+
+## Uncomment if you want to setup tunnel endpoint address by OpenVPN client.
+## It's commented out because it may be convenient to setup
+## these addresses by other means, eg. by netifd in OpenWRT/LEDE.
+{% set ip6addr = "{}{}/64".format(ipv6tun_interconnect_prefix, item.id) %}
+{% set ip6gw = "{}200".format(ipv6tun_interconnect_prefix) %}
+{% set ip6prefix = "{}{}::/48".format(ipv6tun_delegated_prefix, item.id) %}
+#ifconfig 169.254.200.200 255.255.255.255 #Dummy IPv4 config just to make OpenVPN happy
+#ifconfig-ipv6 {{ ip6addr }} {{ ip6gw }}
+
+## Please note that you still need to setup the delegated prefix for
+## your other interfaces manually. Your delegated prefix is {{ ip6prefix }}
+
+## Uncomment if you want to setup default route by OpenVPN client
+#redirect-gateway ipv6 !ipv4  # Works only with OpenVPN 2.4+
+#route-ipv6 ::/0              # Works everywhere
+
+## If you use OpenWRT/LEDE, setup address by following snippet of /etc/config/network
+#config interface 'ipv6tun'
+#        option ifname 'tunipv6'
+#        option proto 'static'
+#        option ip6addr '{{ ip6addr }}'
+#        option ip6gw '{{ ip6gw }}'
+#        option ip6prefix '{{ ip6prefix }}'
+
+## Don't forget to add 'tunipv6' interface to the WAN firewall zone in /etc/config/firewall
+#config zone
+#        option name 'wan'
+#        list network 'wan'
+#        list network 'wan6'
+#        list network 'ipv6tun'
+#        option ...
+
+## The rest of the file contains embedded CA certficate, your private key (SENSITIVE!)
+## and your certificate (watch out for the expiration!)
+<ca>
+{{ lookup('file', ipv6tun_easyrsa3 + "/pki/ca.crt") }}
+</ca>
+{% set privkey = "{}/pki/private/{}.key".format(ipv6tun_easyrsa3, item.client) %}
+{% if privkey|exists %}
+### WARNING: Below is the private key. NEVER share this part with anybody
+<key>
+{{ lookup('file', privkey) }}
+</key>
+### WARNING: Above is the private key. NEVER share this part with anybody
+{% else %}
+## Please supply your private key either as a path
+#key /path/to/private.key
+## Or in between <key> and </key> tags
+{% endif %}
+
+<cert>
+{{ lookup('file', "{}/pki/issued/{}.crt".format(ipv6tun_easyrsa3, item.client)) }}
+</cert>

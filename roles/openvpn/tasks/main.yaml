@@ -1,0 +1,40 @@
+---
+
+ - name: Install OpenVPN
+   package:
+     name: "{{ item }}"
+     state: latest
+   with_items:
+     - openvpn
+     - easy-rsa
+
+ - name: Enable IPv6 forwarding
+   lineinfile:
+     dest: /etc/sysctl.d/99-ipv6-forward.conf
+     create: yes
+     line: "net.ipv6.conf.all.forwarding = 1"
+
+ - name: Template OpenVPN config
+   template:
+     src: ipv6tunnel.conf.j2
+     dest: "{{ openvpn_config_file }}"
+   notify: restart OpenVPN
+
+ - name: Fix permissions of the PKI directory
+   file: 
+     path: "{{ openvpn_certpath }}"
+     group: daemon
+     mode: 0710
+
+ - name: Fix permissions of the CRL
+   file: 
+     path: "{{ openvpn_crl }}"
+     group: daemon
+     mode: 0640
+
+ - name: Enable OpenVPN service
+   service:
+     name: "{{ openvpn_systemd_service_name }}"
+     enabled: yes
+
+ - meta: flush_handlers

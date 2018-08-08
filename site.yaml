@@ -1,0 +1,12 @@
+---
+
+ - name: Setup ipv6tun01
+   hosts: ipv6tun01
+   become: true
+   roles:
+     - user-friendly-server
+     - logrotate
+     - postfix
+     - ntp
+     - openvpn
+     - knot
