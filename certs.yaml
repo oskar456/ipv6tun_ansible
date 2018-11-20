@@ -32,3 +32,31 @@
          src: ipv6tun.ovpn.j2
          dest: "{{ ipv6tun_clientdir }}/ipv6tun-{{ item.client }}.conf"
        with_items: "{{ ipv6tun_clients }}"
+       register: clientconfigs
+
+     - name: Send new config files
+       mail:
+         host: localhost
+         from: ipv6tun@vpsfree.cz
+         attach: "{{ item.dest }}"
+         to: "<{{ item.item.email }}>"
+         charset: utf-8
+         subject: "Konfigurační soubor pro IPv6 tunel"
+         body: |
+           Ahoj,
+
+           v příloze přikládám konfigurační soubor pro OpenVPN klienta.
+           Uvnitř souboru jsou i komentované ukázky konfigurace pro OpenWRT.
+
+           V případě problémů nebo námětů na vylepšení prosím piš do původního ticketu,
+           který poznáš podle toho, že v předmětu zprávy je číslo.
+
+           Další informace jsou také na KB:
+           https://kb.vpsfree.cz/informace/projekty/ipv6tunel
+
+           -- 
+           Zdraví
+           Ondřej Caletka
+           vpsFree.cz
+       when: item.changed
+       with_items: "{{ clientconfigs.results }}"
