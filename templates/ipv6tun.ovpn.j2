@@ -55,7 +55,7 @@ keepalive 30 120
 {{ lookup('file', ipv6tun_easyrsa3 + "/pki/ca.crt") }}
 </ca>
 {% set privkey = "{}/pki/private/{}.key".format(ipv6tun_easyrsa3, item.client) %}
-{% if privkey|exists %}
+{% if privkey is exists %}
 ### WARNING: Below is the private key. NEVER share this part with anybody
 <key>
 {{ lookup('file', privkey) }}
