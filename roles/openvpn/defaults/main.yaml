@@ -31,3 +31,4 @@ openvpn_others:
   - "group daemon"
   - "explicit-exit-notify 1"
   - "mute 20"
+  - "proto udp6"
