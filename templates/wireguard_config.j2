@@ -1,0 +1,14 @@
+# {{ ansible_managed }}
+
+[Interface]
+PrivateKey = {{ wireguard_privatekey }}
+ListenPort = {{ wireguard_port | default(51820) }}
+
+{% for peer in ipv6tun_clients if peer.pubkey %}
+[Peer]
+# {{ peer.client }}
+PublicKey = {{ peer.pubkey }}
+AllowedIPs = {{ ipv6tun_interconnect_prefix }}{{ peer.id }}/128
+AllowedIPs =  {{ ipv6tun_delegated_prefix }}{{ peer.id }}::/48
+
+{% endfor %}

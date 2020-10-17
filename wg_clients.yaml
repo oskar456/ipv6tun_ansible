@@ -1,0 +1,28 @@
+---
+
+ - name: Generate WireGuard Configuration
+   hosts: ipv6tun01
+   become: true
+   tasks:
+     - name: Import client list
+       include_vars: clientlist-wg.yaml
+
+     - name: Template config file
+       template:
+         src: wireguard_config.j2
+         dest: "/etc/wireguard/{{ wireguard_ifname }}.conf"
+       notify: Reload Wireguard
+
+     - name: Enable and start Wireguard tunnel
+       service:
+         name: "wg-quick@{{ wireguard_ifname }}"
+         enabled: yes
+         state: started
+
+   handlers:
+     - name: Reload Wireguard
+       service:
+         name: "wg-quick@{{ wireguard_ifname }}"
+         state: reloaded
+
+...
