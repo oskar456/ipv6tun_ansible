@@ -11,7 +11,7 @@
        template:
          src: wireguard_config.j2
          dest: "/etc/wireguard/{{ wireguard_ifname }}.conf"
-       notify: Reload Wireguard
+       notify: Restart Wireguard
 
      - name: Enable and start Wireguard tunnel
        service:
@@ -25,4 +25,67 @@
          name: "wg-quick@{{ wireguard_ifname }}"
          state: reloaded
 
+     - name: Restart Wireguard
+       service:
+         name: "wg-quick@{{ wireguard_ifname }}"
+         state: restarted
+
+
+ - name: Generate client config files
+   hosts: ipv6tun01
+   become: false
+   tasks:
+     - name: Import client list
+       include_vars: clientlist-wg.yaml
+
+     - name: Get server public key
+       command:
+          cmd: wg pubkey
+          stdin: "{{ wireguard_privatekey }}"
+       register: wg_pubkey
+       changed_when: false
+
+     - set_fact:
+         wireguard_pubkey: "{{ wg_pubkey.stdout }}"
+
+     - name: debug
+       debug:
+         var: item.id
+       with_items: "{{ ipv6tun_clients }}"
+      
+     - name: Generate client config file
+       template: 
+         src: wgipv6tun.conf.j2
+         dest: "{{ ipv6tun_wgdir }}/wgipv6tun-{{ item.client }}.conf"
+       with_items: "{{ ipv6tun_clients }}"
+       register: clientconfigs
+       ignore_errors: yes
+
+     - name: Send new config files
+       mail:
+         host: localhost
+         from: ipv6tun@vpsfree.cz
+         attach: "{{ item.dest }}"
+         to: "<{{ item.item.email }}>"
+         charset: utf-8
+         subject: "Konfigurační soubor pro Wireguard IPv6 tunel"
+         body: |
+           Ahoj,
+
+           v příloze přikládám konfigurační soubor pro Wireguard.
+           Na vyznačené místo je třeba doplnit privátní klíč!
+           Uvnitř souboru jsou i komentované ukázky konfigurace pro OpenWRT.
+
+           V případě problémů nebo námětů na vylepšení prosím piš do původního ticketu,
+           který poznáš podle toho, že v předmětu zprávy je číslo.
+
+           Další informace jsou také na KB:
+           https://kb.vpsfree.cz/informace/projekty/ipv6tunel
+
+           -- 
+           Zdraví
+           Ondřej Caletka
+           vpsFree.cz
+       when: item.changed
+       with_items: "{{ clientconfigs.results }}"
 ...

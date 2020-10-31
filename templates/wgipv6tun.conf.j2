@@ -1,0 +1,46 @@
+# vpsFree.cz WireGuard IPv6 tunnel client configuration file
+# generated for client {{ item.client }}
+
+[Interface]
+# FIXME: Insert your private key (public key: {{ item.pubkey }})
+PrivateKey = 
+Address = {{ ipv6tun_interconnect_prefix }}{{ item.id }}
+
+[Peer]
+Endpoint = ipv6tun01.vpsfree.cz:{{ wireguard_port | default(51820) }}
+PublicKey = {{ wireguard_pubkey }}
+AllowedIPs =  ::/0
+
+
+## If you use OpenWRT/LEDE, setup tunnel by following snippet of /etc/config/network
+#config interface 'wgipv6tun'
+#        option proto 'wireguard'
+#        option private_key 'FIXME'
+#        option ip6prefix '{{ ipv6tun_delegated_prefix }}{{ item.id }}::/48'
+#        list addresses '{{ ipv6tun_interconnect_prefix }}{{ item.id }}'
+#
+#config wireguard_wgipv6tun
+#        option endpoint_host 'ipv6tun01.vpsfree.cz'
+#        option endpoint_port '{{ wireguard_port | default(51820) }}'
+#        option route_allowed_ips '0'
+#        option public_key '{{ wireguard_pubkey }}'
+#        list allowed_ips '::/0'
+#
+#config route6 'default_v6_gw_a'
+#        option interface 'wgipv6tun'
+#        option target '::/0'
+#        option source '{{ ipv6tun_interconnect_prefix }}{{ item.id }}'
+#
+#config route6 'default_v6_gw_b'
+#        option interface 'wgipv6tun'
+#        option target '::/0'
+#        option source '{{ ipv6tun_delegated_prefix }}{{ item.id }}::/48'
+#
+
+## Don't forget to add 'wgipv6tun' interface to the WAN firewall zone in /etc/config/firewall
+#config zone
+#        option name 'wan'
+#        list network 'wan'
+#        list network 'wan6'
+#        list network 'wgipv6tun'
+#        option ...

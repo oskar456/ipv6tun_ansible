@@ -4,7 +4,7 @@
 PrivateKey = {{ wireguard_privatekey }}
 ListenPort = {{ wireguard_port | default(51820) }}
 
-{% for peer in ipv6tun_clients if peer.pubkey %}
+{% for peer in ipv6tun_clients if 'pubkey' in peer %}
 [Peer]
 # {{ peer.client }}
 PublicKey = {{ peer.pubkey }}

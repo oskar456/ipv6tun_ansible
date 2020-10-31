@@ -10,6 +10,7 @@ ipv6tun_delegated_prefix: "2a03:3b40:"
 ipv6tun_interconnect_prefix: "{{ ipv6tun_delegated_prefix }}200::"
 
 
+ipv6tun_wgdir: "{{ ipv6tun_datadir }}/wgconfig"
 wireguard_ifname: wg0
 wireguard_privatekey: !vault |
           $ANSIBLE_VAULT;1.1;AES256
