@@ -33,6 +33,9 @@ keepalive 30 120
 #redirect-gateway ipv6 !ipv4  # Works only with OpenVPN 2.4+
 #route-ipv6 ::/0              # Works everywhere
 
+## If you run OpenWRT, this may help reestabilishing connection after an outage
+#ipchange "/sbin/ifup ipv6tun“
+
 ## If you use OpenWRT/LEDE, setup address by following snippet of /etc/config/network
 #config interface 'ipv6tun'
 #        option ifname 'tunipv6'
