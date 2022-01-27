@@ -9,6 +9,6 @@ ListenPort = {{ wireguard_port | default(51820) }}
 # {{ peer.client }}
 PublicKey = {{ peer.pubkey }}
 AllowedIPs = {{ ipv6tun_interconnect_prefix }}{{ peer.id }}/128
-AllowedIPs =  {{ ipv6tun_delegated_prefix }}{{ peer.id }}::/48
+AllowedIPs = {{ ipv6tun_delegated_prefix }}{{ peer.id }}::/48
 
 {% endfor %}
