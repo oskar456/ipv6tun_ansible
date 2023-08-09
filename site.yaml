@@ -7,6 +7,5 @@
      - user-friendly-server
      - logrotate
      - postfix
-     - ntp
      - openvpn
      - knot

@@ -64,7 +64,9 @@
      - name: Send new config files
        mail:
          host: localhost
-         from: ipv6tun@vpsfree.cz
+         from: oskar@ipv6tun01.vpsfree.cz
+         headers:
+           - Reply-To=ipv6tun@vpsfree.cz
          attach: "{{ item.dest }}"
          to: "<{{ item.item.email }}>"
          charset: utf-8

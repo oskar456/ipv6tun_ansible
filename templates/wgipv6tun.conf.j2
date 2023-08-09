@@ -10,9 +10,10 @@ Address = {{ ipv6tun_interconnect_prefix }}{{ item.id }}
 Endpoint = ipv6tun01.vpsfree.cz:{{ wireguard_port | default(51820) }}
 PublicKey = {{ wireguard_pubkey }}
 AllowedIPs =  ::/0
+# PersistentKeepalive = 120  # Optional: use if there is a NAT/firewall blocking incoming traffic
 
 
-## If you use OpenWRT/LEDE, setup tunnel by following snippet of /etc/config/network
+## If you use OpenWRT, setup tunnel by following snippet of /etc/config/network
 #config interface 'wgipv6tun'
 #        option proto 'wireguard'
 #        option private_key 'FIXME'
@@ -25,6 +26,7 @@ AllowedIPs =  ::/0
 #        option route_allowed_ips '0'
 #        option public_key '{{ wireguard_pubkey }}'
 #        list allowed_ips '::/0'
+#	#option persistent_keepalive '120'  # Optional: use if there is a NAT/firewall
 #
 #config route6 'default_v6_gw_a'
 #        option interface 'wgipv6tun'

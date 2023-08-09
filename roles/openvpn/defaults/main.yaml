@@ -23,8 +23,8 @@ openvpn_dh: "{{ openvpn_certpath }}/dh.pem"
 
 openvpn_others:
   - "auth none"
-  - "cipher none"
-  - "ncp-ciphers AES-256-GCM:AES-256-CBC"
+  - "data-ciphers AES-256-GCM:AES-256-CBC:none"
+  - "data-ciphers-fallback none"
   - "ping 30"
   - "ping-restart 60"
   - "user nobody"

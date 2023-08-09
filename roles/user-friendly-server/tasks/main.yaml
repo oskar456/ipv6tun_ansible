@@ -55,11 +55,13 @@
      dest: /etc/default/console-setup
      regexp: ^FONTFACE=
      line: FONTFACE="VGA"
+   ignore_errors: true
 
  - name: Do not clear boot logs on tty1
    copy:
      src: getty@tty1.service.d
      dest: /etc/systemd/system/
+   ignore_errors: true
 
  - name: Disable HashKnownHosts
    lineinfile:
